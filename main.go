@@ -23,8 +23,10 @@ func main() {
 	g := cli.Database("test").Collection("insidetest")
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancel()
-	loc, _ := time.LoadLocation("Asia/Kolkata")
-	_, err = g.InsertOne(ctx, bson.D{{"time", time.Now().In(loc)}})
+	now, _ := time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
+	location, _ := time.LoadLocation("Asia/Kolkata")
+	nowIndia := now.In(location)
+	_, err = g.InsertOne(ctx, bson.D{{Key: "time", Value: now}, {Key: "timeIndia", Value: nowIndia}})
 	if err != nil {
 		log.Fatal(err)
 	}
